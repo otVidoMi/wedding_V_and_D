@@ -1445,6 +1445,9 @@ bottom: -15px;
 }
 
 @media (max-width: 375px) {
+  .bg-floral-ornament_2{
+    top: 75px;
+  }
 
 
   .welcome__photo-bg{
@@ -1454,7 +1457,6 @@ bottom: -15px;
   .welcome__bg{
     width: 300px;
     left: 50%;
-    transform: translateX(-50%);
   }
 
   .calendar__months{
@@ -1489,5 +1491,9 @@ bottom: -15px;
         top: -21%;
         left: 50%;
         transform: translateX(-50%);
+      }
+
+      .footer__bg{
+        width: 335px;
       }
 }
