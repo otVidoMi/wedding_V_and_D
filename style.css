@@ -1497,3 +1497,169 @@ bottom: -15px;
         width: 335px;
       }
 }
+
+
+
+/* ========== МУЗЫКАЛЬНЫЙ ПЛЕЕР С БАБОЧКОЙ-КНОПКОЙ ========== */
+
+/* Контейнер для кнопки-бабочки - в правом нижнем углу */
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+}
+
+/* Стили кнопки-бабочки (без фона, только бабочка) */
+.music-btn {
+  width: 60px;
+  height: 60px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  outline: none;
+  padding: 0;
+}
+
+/* Убираем обводку при фокусе */
+.music-btn:focus,
+.music-btn:active {
+  outline: none;
+}
+
+/* Анимация пульсации для привлечения внимания */
+.music-btn::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: rgba(203, 6, 9, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+
+
+/* Иконка бабочки внутри кнопки */
+.music-btn .butterfly {
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Бабочка в состоянии паузы (белая) */
+.music-btn .butterfly path {
+  stroke: #cb0609;
+  stroke-width: 2;
+  transition: stroke 0.3s ease;
+}
+
+/* Бабочка в состоянии воспроизведения  */
+.music-btn.playing .butterfly path {
+  stroke: #000000;
+}
+
+/* Эффект при наведении на кнопку */
+.music-btn:hover {
+  transform: scale(1.1);
+}
+
+.music-btn:hover .butterfly path {
+  stroke-width: 2.5;
+}
+
+/* Эффект при нажатии */
+.music-btn:active {
+  transform: scale(0.95);
+}
+
+/* Анимация трепетания бабочки */
+@keyframes flutter {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(2deg);
+  }
+}
+
+/* Когда музыка играет, бабочка трепещет */
+.music-btn.playing .butterfly {
+  animation: flutter 1.2s ease-in-out infinite;
+}
+
+/* Скрытый аудиоплеер */
+.hidden-audio {
+  display: none;
+}
+
+/* ========== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
+
+/* Планшеты и небольшие экраны */
+@media (max-width: 768px) {
+  .music-btn {
+    width: 50px;
+    height: 50px;
+  }
+  .music-player {
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+/* Мобильные телефоны */
+@media (max-width: 480px) {
+  .music-btn {
+    width: 45px;
+    height: 45px;
+  }
+  .music-player {
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+/* ========== ДОПОЛНИТЕЛЬНЫЕ АНИМАЦИИ ========== */
+
+/* Анимация тряски для привлечения внимания (при первом заходе) */
+@keyframes shake {
+  0%, 100% { 
+    transform: translateX(0); 
+  }
+  25% { 
+    transform: translateX(-5px); 
+  }
+  75% { 
+    transform: translateX(5px); 
+  }
+}
+
+/* Анимация появления кнопки */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Плавное появление кнопки при загрузке страницы */
+.music-player {
+  animation: fadeInUp 0.5s ease-out;
+}
