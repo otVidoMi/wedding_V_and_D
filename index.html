@@ -275,15 +275,15 @@
       if (isSafari()) {
           // Для Safari - исправленная версия
           const script = document.createElement('script');
-          script.src = '/js/page-scroll-reveal-safari.js';
+          script.src = 'js/page-scroll-reveal-safari.js';
           document.head.appendChild(script);
       } else {
           // Для остальных браузеров - оригинальная версия
           const desctopscript = document.createElement('script');
-          desctopscript.src = '/js/glowing-line.js';
+          desctopscript.src = 'js/glowing-line.js';
           document.head.appendChild(desctopscript);
           const mobilescript = document.createElement('script');
-          mobilescript.src = '/js/glowing-line2.js';
+          mobilescript.src = 'js/glowing-line2.js';
           document.head.appendChild(mobilescript);
           console.log('Загружена стандартная и мобильная версии');
       }
