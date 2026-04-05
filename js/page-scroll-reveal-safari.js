@@ -1,4 +1,4 @@
-// page-scroll-reveal.js (исправленная версия для Safari с корректной работой всех сегментов)
+// page-scroll-reveal.js (полностью переработанная версия для Safari)
 (function () {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -21,12 +21,11 @@
 
         // Определяем браузер Safari
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        console.log('Браузер Safari:', isSafari);
-
-        // Получаем d атрибут и разбиваем на сегменты по командам M (move to)
+        
+        // Получаем d атрибут
         const dAttribute = svgPath.getAttribute('d');
 
-        // Разбиваем path на отдельные сегменты (каждый начинается с M)
+        // Разбиваем path на сегменты
         const segments = [];
         let currentSegment = '';
 
@@ -45,8 +44,12 @@
         }
 
         console.log('Найдено сегментов:', segments.length);
+        console.log('Браузер Safari:', isSafari);
 
-        // Создаем отдельные path элементы для каждого сегмента
+        // Очищаем SVG
+        svgPath.remove();
+
+        // Создаем и добавляем новые пути
         const paths = [];
         segments.forEach((segmentData, index) => {
             const newPath = document.createElementNS(svgNS, 'path');
@@ -56,65 +59,49 @@
             newPath.setAttribute('fill', 'none');
             newPath.setAttribute('stroke-linecap', 'round');
             newPath.setAttribute('stroke-linejoin', 'round');
+            newPath.setAttribute('data-segment-index', index);
+            svgElement.appendChild(newPath);
             paths.push(newPath);
         });
 
-        // Удаляем оригинальный path и добавляем новые
-        svgPath.remove();
-        paths.forEach(path => svgElement.appendChild(path));
-
-        // Рассчитываем длины всех сегментов
-        const segmentsInfo = [];
-        let totalLength = 0;
-
-        paths.forEach((path, idx) => {
+        // Получаем длины всех путей
+        const segmentsLengths = paths.map(path => {
             try {
-                const length = path.getTotalLength();
-                segmentsInfo.push({
-                    path: path,
-                    length: length,
-                    start: totalLength,
-                    end: totalLength + length,
-                    index: idx
-                });
-                totalLength += length;
-
-                // Начальное состояние
-                path.style.strokeDasharray = length;
-                if (isSafari) {
-                    // Для Safari начинаем с видимого состояния
-                    path.style.strokeDashoffset = '0';
-                } else {
-                    // Для других браузеров начинаем со скрытого
-                    path.style.strokeDashoffset = length;
-                }
-                path.style.strokeOpacity = '1';
-            } catch (e) {
-                console.error('Ошибка при расчете длины сегмента', idx, e);
-                segmentsInfo.push({
-                    path: path,
-                    length: 0,
-                    start: totalLength,
-                    end: totalLength,
-                    index: idx
-                });
+                return path.getTotalLength();
+            } catch(e) {
+                console.error('Ошибка получения длины', e);
+                return 0;
             }
         });
 
-        console.log('Общая длина всех сегментов:', totalLength);
+        console.log('Длины сегментов:', segmentsLengths);
 
-        // Функция для получения прогресса скроллла
+        // Устанавливаем начальные стили для каждого пути
+        paths.forEach((path, idx) => {
+            const length = segmentsLengths[idx];
+            if (length > 0) {
+                path.style.strokeDasharray = length;
+                
+                if (isSafari) {
+                    // Safari: начинаем с видимой линии
+                    path.style.strokeDashoffset = '0';
+                } else {
+                    // Другие браузеры: начинаем со скрытой линии
+                    path.style.strokeDashoffset = length;
+                }
+            }
+        });
+
+        // Функция расчета прогресса скролла
         function getScrollProgress() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
-            
             const svgRect = svgElement.getBoundingClientRect();
-            const svgTop = svgRect.top + scrollTop;
-            const svgBottom = svgTop + svgRect.height;
             
-            // Настройки для всей анимации
-            const startPoint = svgTop - windowHeight * 0.3;
-            const endPoint = svgBottom - windowHeight * 0.8;
+            // Начало анимации: когда SVG появляется в окне
+            const startPoint = svgRect.top + scrollTop - windowHeight * 0.3;
+            // Конец анимации: когда SVG покидает окно
+            const endPoint = svgRect.bottom + scrollTop - windowHeight * 0.7;
             
             let progress = 0;
             
@@ -129,120 +116,90 @@
             return Math.min(1, Math.max(0, progress));
         }
 
-        // Функция обновления отрисовки
+        // Функция обновления - ПРОСТАЯ И ПОНЯТНАЯ
         function updateProgress() {
-            const scrollProgress = getScrollProgress();
+            const progress = getScrollProgress();
             
             // Для отладки
-            if (Math.random() < 0.02) {
-                console.log('Scroll progress:', scrollProgress.toFixed(3));
+            if (Math.random() < 0.01) {
+                console.log('Progress:', progress.toFixed(3));
             }
             
-            segmentsInfo.forEach((segment, idx) => {
-                if (segment.length === 0) return;
+            // Для каждого сегмента
+            paths.forEach((path, idx) => {
+                const length = segmentsLengths[idx];
+                if (length === 0) return;
                 
                 let offset;
                 
                 if (isSafari) {
-                    // Для Safari - простая инверсия для всех сегментов
-                    // При scrollProgress = 0 → линия видна полностью (offset = 0)
-                    // При scrollProgress = 1 → линия скрыта полностью (offset = segment.length)
-                    offset = segment.length * scrollProgress;
-                    
-                    // Для отладки первого сегмента
-                    if (idx === 0 && Math.random() < 0.02) {
-                        console.log(`Segment ${idx}: progress=${scrollProgress.toFixed(3)}, offset=${offset.toFixed(0)}/${segment.length.toFixed(0)}`);
-                    }
+                    // SAFARI: Линия ИСЧЕЗАЕТ при скролле вниз
+                    // progress 0 → offset 0 (линия видна)
+                    // progress 1 → offset length (линия скрыта)
+                    offset = length * progress;
                 } else {
-                    // Оригинальная логика для других браузеров
-                    const invertedProgress = 1 - scrollProgress;
-                    const pixelsToShow = totalLength * invertedProgress;
-                    
-                    let segmentProgress = 0;
-                    if (pixelsToShow > segment.start) {
-                        if (pixelsToShow >= segment.end) {
-                            segmentProgress = 1;
-                        } else {
-                            segmentProgress = (pixelsToShow - segment.start) / segment.length;
-                        }
-                    }
-                    
-                    // Разная логика для разных сегментов
-                    if (idx === 2) {
-                        offset = (segment.length * segmentProgress);
-                    } else if (idx === 0) {
-                        offset = -(segment.length * segmentProgress);
-                    } else {
-                        offset = -(segment.length * segmentProgress);
-                    }
+                    // ДРУГИЕ БРАУЗЕРЫ: Линия ПОЯВЛЯЕТСЯ при скролле вниз
+                    // progress 0 → offset length (линия скрыта)
+                    // progress 1 → offset 0 (линия видна)
+                    offset = length * (1 - progress);
                 }
                 
-                segment.path.style.strokeDashoffset = offset;
+                path.style.strokeDashoffset = offset;
+                
+                // Отладка для первого сегмента
+                if (idx === 0 && Math.random() < 0.02) {
+                    console.log(`Segment ${idx}: progress=${progress.toFixed(3)}, offset=${offset.toFixed(0)}/${length.toFixed(0)}`);
+                }
             });
         }
 
-        // Оптимизация производительности
+        // Обработчики событий с оптимизацией
         let ticking = false;
-        let rafId = null;
-
-        function onScroll() {
+        
+        function handleScroll() {
             if (!ticking) {
-                rafId = requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
                     updateProgress();
                     ticking = false;
                 });
                 ticking = true;
             }
         }
-
-        function onResize() {
-            if (rafId) {
-                cancelAnimationFrame(rafId);
-            }
-            rafId = requestAnimationFrame(() => {
-                // Пересчитываем длины при ресайзе
-                let newTotalLength = 0;
-                segmentsInfo.forEach((segment, idx) => {
-                    try {
-                        const newLength = segment.path.getTotalLength();
-                        segment.length = newLength;
-                        segment.end = segment.start + newLength;
-                        newTotalLength += newLength;
-                        segment.path.style.strokeDasharray = newLength;
-                        
-                        if (!isSafari && segment.path.style.strokeDashoffset) {
-                            // Сохраняем текущий offset
-                            const currentOffset = parseFloat(segment.path.style.strokeDashoffset);
-                            if (!isNaN(currentOffset)) {
-                                // Пересчитываем offset при ресайзе
-                            }
-                        }
-                    } catch(e) {
-                        console.error('Ошибка пересчета длины', e);
+        
+        function handleResize() {
+            // Пересчитываем длины при ресайзе
+            paths.forEach((path, idx) => {
+                try {
+                    const newLength = path.getTotalLength();
+                    segmentsLengths[idx] = newLength;
+                    path.style.strokeDasharray = newLength;
+                    
+                    // Сохраняем текущее состояние
+                    const currentProgress = getScrollProgress();
+                    if (isSafari) {
+                        path.style.strokeDashoffset = newLength * currentProgress;
+                    } else {
+                        path.style.strokeDashoffset = newLength * (1 - currentProgress);
                     }
-                });
-                totalLength = newTotalLength;
-                updateProgress();
-                ticking = false;
+                } catch(e) {}
             });
+            
+            updateProgress();
         }
-
-        // Добавляем слушатели событий
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onResize);
-
-        // Запускаем начальную отрисовку
+        
+        // Подписываемся на события
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleResize);
+        
+        // Запускаем анимацию
         updateProgress();
-
-        // Очистка
+        
+        console.log('Скрипт инициализирован. Режим:', isSafari ? 'SAFARI (линия исчезает)' : 'STANDARD (линия появляется)');
+        
+        // Функция очистки
         window.addEventListener('beforeunload', () => {
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onResize);
-            if (rafId) {
-                cancelAnimationFrame(rafId);
-            }
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleResize);
         });
-
-        console.log('Скрипт инициализирован - режим Safari:', isSafari ? 'включен (инверсия для всех сегментов)' : 'выключен');
     }
 })();
