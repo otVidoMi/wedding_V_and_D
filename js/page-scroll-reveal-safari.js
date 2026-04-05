@@ -161,9 +161,9 @@
                 if (idx === 2) {
                     offset = (segment.length * segmentProgress);
                 } else if (idx === 0) {
-                    offset = -(segment.length * segmentProgress);
+                    offset = (segment.length * segmentProgress);
                 } else {
-                    offset = -(segment.length * segmentProgress);
+                    offset = (segment.length * segmentProgress);
                 }
 
                 segment.path.style.strokeDashoffset = offset;
