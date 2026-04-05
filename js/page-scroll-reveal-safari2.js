@@ -7,7 +7,7 @@
     }
 
     function init() {
-        const svgElement = document.querySelector('.bg-floral-ornament');
+        const svgElement = document.querySelector('.bg-floral-ornament_2');
         if (!svgElement) return;
 
         const svgPath = svgElement.querySelector('path');
