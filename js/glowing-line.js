@@ -1,4 +1,4 @@
-// page-scroll-reveal.js (исправленная версия с корректной отрисовкой первого сегмента)
+// page-scroll-reveal.js (исправленная версия с поддержкой Safari)
 (function () {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -18,6 +18,10 @@
         // Сохраняем оригинальные стили
         const originalStroke = svgPath.getAttribute('stroke') || '#cb0609';
         const originalWidth = svgPath.getAttribute('stroke-width') || '3';
+
+        // Определяем браузер Safari
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        console.log('Браузер Safari:', isSafari);
 
         // Получаем d атрибут и разбиваем на сегменты по командам M (move to)
         const dAttribute = svgPath.getAttribute('d');
@@ -114,7 +118,6 @@
                 endPointMultiplier = 1;
             }
             
-
             // Анимация начинается, когда верх SVG достигает верха окна
             // и заканчивается, когда низ SVG достигает верха окна
             const startPoint = svgTop - windowHeight * startPointMultiplier;
@@ -140,7 +143,12 @@
                 if (segment.length === 0) return;
 
                 // Получаем прогресс для конкретного сегмента
-                const progress = getScrollProgressForSegment(idx);
+                let progress = getScrollProgressForSegment(idx);
+
+                // Для Safari инвертируем прогресс
+                if (isSafari) {
+                    progress = 1 - progress;
+                }
 
                 // ИНВЕРТИРУЕМ ПРОГРЕСС для отрисовки сверху вниз
                 const invertedProgress = 1 - progress;
@@ -157,13 +165,19 @@
                 }
 
                 let offset;
-                // Для первого сегмента рисуем от начала к концу
-                if (idx === 2) {
-                    offset = (segment.length * segmentProgress);
-                } else if (idx === 0) {
-                    offset = -(segment.length * segmentProgress);
+                // Для Safari используем другой подход к offset
+                if (isSafari) {
+                    // В Safari рисуем от начала к концу для всех сегментов
+                    offset = segment.length * (1 - segmentProgress);
                 } else {
-                    offset = -(segment.length * segmentProgress);
+                    // Оригинальная логика для других браузеров
+                    if (idx === 2) {
+                        offset = (segment.length * segmentProgress);
+                    } else if (idx === 0) {
+                        offset = -(segment.length * segmentProgress);
+                    } else {
+                        offset = -(segment.length * segmentProgress);
+                    }
                 }
 
                 segment.path.style.strokeDashoffset = offset;
@@ -223,6 +237,6 @@
             }
         });
 
-        console.log('Скрипт инициализирован - для первого сегмента используется endPoint множитель 1');
+        console.log('Скрипт инициализирован - поддержка Safari:', isSafari);
     }
 })();
