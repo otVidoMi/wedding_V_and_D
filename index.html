@@ -262,7 +262,7 @@
   
   </div>
   
-  <!--<script>
+  <script>
       // Определяем Safari (работает на iOS и macOS)
       function isSafari() {
           const ua = navigator.userAgent;
@@ -285,14 +285,15 @@
           const mobilescript = document.createElement('script');
           mobilescript.src = '/js/glowing-line2.js';
           document.head.appendChild(mobilescript);
+          console.log('Загружена стандартная и мобильная версии');
       }
-    </script>-->
+    </script>
   
     <script src="js/music.js" defer></script>
     <script src="js/timer.js" defer></script>
     <script src="js/form.js" defer></script>
-    <script src="js/glowing-line.js" defer></script>
-    <script src="js/glowing-line2.js" defer></script>
+    <!--<script src="js/glowing-line.js" defer></script>-->
+    <!--<script src="js/glowing-line2.js" defer></script>-->
     <!--<script src="js/glowing-line-safari.js" defer></script>-->
     <!--<script src="js/glowing-line2-safari.js" defer></script>-->
 </body>
