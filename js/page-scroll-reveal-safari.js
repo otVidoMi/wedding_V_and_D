@@ -1,4 +1,4 @@
-// page-scroll-reveal.js (исправленная версия с CSS-трансформацией для Safari)
+// page-scroll-reveal.js (исправленная версия для Safari с корректной работой всех сегментов)
 (function () {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -23,29 +23,6 @@
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
         console.log('Браузер Safari:', isSafari);
 
-        // ДЛЯ SAFARI: Добавляем CSS для инверсии анимации
-        if (isSafari) {
-            const style = document.createElement('style');
-            style.textContent = `
-                /* Инверсия направления анимации для Safari */
-                .bg-floral-ornament path {
-                    animation: safari-reverse-draw linear forwards;
-                    animation-timeline: scroll();
-                }
-                
-                @keyframes safari-reverse-draw {
-                    from {
-                        stroke-dashoffset: 0;
-                    }
-                    to {
-                        stroke-dashoffset: var(--total-length);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            console.log('Добавлен CSS-фикс для Safari');
-        }
-
         // Получаем d атрибут и разбиваем на сегменты по командам M (move to)
         const dAttribute = svgPath.getAttribute('d');
 
@@ -55,8 +32,6 @@
 
         for (let i = 0; i < dAttribute.length; i++) {
             const char = dAttribute[i];
-
-            // Если встречаем M (заглавную) и это не начало строки
             if (char === 'M' && currentSegment.length > 0) {
                 segments.push(currentSegment.trim());
                 currentSegment = char;
@@ -65,7 +40,6 @@
             }
         }
 
-        // Добавляем последний сегмент
         if (currentSegment.trim()) {
             segments.push(currentSegment.trim());
         }
@@ -105,16 +79,13 @@
                 });
                 totalLength += length;
 
-                // Устанавливаем начальное состояние
+                // Начальное состояние
+                path.style.strokeDasharray = length;
                 if (isSafari) {
-                    // Для Safari используем CSS переменную
-                    path.style.strokeDasharray = length;
+                    // Для Safari начинаем с видимого состояния
                     path.style.strokeDashoffset = '0';
-                    path.style.setProperty('--length', length);
-                    path.style.setProperty('--total-length', totalLength);
                 } else {
-                    // Для других браузеров стандартное поведение
-                    path.style.strokeDasharray = length;
+                    // Для других браузеров начинаем со скрытого
                     path.style.strokeDashoffset = length;
                 }
                 path.style.strokeOpacity = '1';
@@ -130,38 +101,23 @@
             }
         });
 
-        // Устанавливаем глобальную CSS переменную для Safari
-        if (isSafari && svgElement) {
-            svgElement.style.setProperty('--total-length', totalLength);
-        }
-
         console.log('Общая длина всех сегментов:', totalLength);
 
-        // Функция для получения прогресса скролла для конкретного сегмента
-        function getScrollProgressForSegment(segmentIndex) {
+        // Функция для получения прогресса скроллла
+        function getScrollProgress() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
-
-            // Получаем позицию SVG относительно верха документа
+            
             const svgRect = svgElement.getBoundingClientRect();
             const svgTop = svgRect.top + scrollTop;
             const svgBottom = svgTop + svgRect.height;
-
-            // Для первого сегмента (idx === 0) используем множитель 1
-            let endPointMultiplier = 0.8;
-            let startPointMultiplier = 0.3;
-            if (segmentIndex === 0) {
-                startPointMultiplier = -0.4;
-                endPointMultiplier = 1;
-            }
             
-            // Анимация начинается, когда верх SVG достигает верха окна
-            // и заканчивается, когда низ SVG достигает верха окна
-            const startPoint = svgTop - windowHeight * startPointMultiplier;
-            const endPoint = svgBottom - windowHeight * endPointMultiplier;
-
+            // Настройки для всей анимации
+            const startPoint = svgTop - windowHeight * 0.3;
+            const endPoint = svgBottom - windowHeight * 0.8;
+            
             let progress = 0;
-
+            
             if (scrollTop <= startPoint) {
                 progress = 0;
             } else if (scrollTop >= endPoint) {
@@ -169,60 +125,67 @@
             } else {
                 progress = (scrollTop - startPoint) / (endPoint - startPoint);
             }
-
+            
             return Math.min(1, Math.max(0, progress));
         }
 
         // Функция обновления отрисовки
         function updateProgress() {
-            // Для Safari используем CSS-анимацию, не нужно обновлять через JS
-            if (isSafari) {
-                return;
+            const scrollProgress = getScrollProgress();
+            
+            // Для отладки
+            if (Math.random() < 0.02) {
+                console.log('Scroll progress:', scrollProgress.toFixed(3));
             }
-
-            // Обновляем каждый сегмент с его индивидуальным прогрессом
+            
             segmentsInfo.forEach((segment, idx) => {
                 if (segment.length === 0) return;
-
-                // Получаем прогресс для конкретного сегмента
-                const progress = getScrollProgressForSegment(idx);
-
-                // ИНВЕРТИРУЕМ ПРОГРЕСС для отрисовки сверху вниз
-                const invertedProgress = 1 - progress;
-                const pixelsToShow = totalLength * invertedProgress;
-
-                let segmentProgress = 0;
-
-                if (pixelsToShow > segment.start) {
-                    if (pixelsToShow >= segment.end) {
-                        segmentProgress = 1;
+                
+                let offset;
+                
+                if (isSafari) {
+                    // Для Safari - простая инверсия для всех сегментов
+                    // При scrollProgress = 0 → линия видна полностью (offset = 0)
+                    // При scrollProgress = 1 → линия скрыта полностью (offset = segment.length)
+                    offset = segment.length * scrollProgress;
+                    
+                    // Для отладки первого сегмента
+                    if (idx === 0 && Math.random() < 0.02) {
+                        console.log(`Segment ${idx}: progress=${scrollProgress.toFixed(3)}, offset=${offset.toFixed(0)}/${segment.length.toFixed(0)}`);
+                    }
+                } else {
+                    // Оригинальная логика для других браузеров
+                    const invertedProgress = 1 - scrollProgress;
+                    const pixelsToShow = totalLength * invertedProgress;
+                    
+                    let segmentProgress = 0;
+                    if (pixelsToShow > segment.start) {
+                        if (pixelsToShow >= segment.end) {
+                            segmentProgress = 1;
+                        } else {
+                            segmentProgress = (pixelsToShow - segment.start) / segment.length;
+                        }
+                    }
+                    
+                    // Разная логика для разных сегментов
+                    if (idx === 2) {
+                        offset = (segment.length * segmentProgress);
+                    } else if (idx === 0) {
+                        offset = -(segment.length * segmentProgress);
                     } else {
-                        segmentProgress = (pixelsToShow - segment.start) / segment.length;
+                        offset = -(segment.length * segmentProgress);
                     }
                 }
-
-                let offset;
-                // Оригинальная логика для других браузеров
-                if (idx === 2) {
-                    offset = (segment.length * segmentProgress);
-                } else if (idx === 0) {
-                    offset = -(segment.length * segmentProgress);
-                } else {
-                    offset = -(segment.length * segmentProgress);
-                }
-
+                
                 segment.path.style.strokeDashoffset = offset;
             });
         }
 
-        // Оптимизация производительности с requestAnimationFrame
+        // Оптимизация производительности
         let ticking = false;
         let rafId = null;
 
         function onScroll() {
-            // Для Safari не нужен обработчик scroll
-            if (isSafari) return;
-            
             if (!ticking) {
                 rafId = requestAnimationFrame(() => {
                     updateProgress();
@@ -233,46 +196,53 @@
         }
 
         function onResize() {
-            if (isSafari) {
-                // Для Safari просто обновляем CSS переменную
-                if (svgElement) {
-                    svgElement.style.setProperty('--total-length', totalLength);
-                }
-                return;
-            }
-            
             if (rafId) {
                 cancelAnimationFrame(rafId);
             }
             rafId = requestAnimationFrame(() => {
+                // Пересчитываем длины при ресайзе
+                let newTotalLength = 0;
+                segmentsInfo.forEach((segment, idx) => {
+                    try {
+                        const newLength = segment.path.getTotalLength();
+                        segment.length = newLength;
+                        segment.end = segment.start + newLength;
+                        newTotalLength += newLength;
+                        segment.path.style.strokeDasharray = newLength;
+                        
+                        if (!isSafari && segment.path.style.strokeDashoffset) {
+                            // Сохраняем текущий offset
+                            const currentOffset = parseFloat(segment.path.style.strokeDashoffset);
+                            if (!isNaN(currentOffset)) {
+                                // Пересчитываем offset при ресайзе
+                            }
+                        }
+                    } catch(e) {
+                        console.error('Ошибка пересчета длины', e);
+                    }
+                });
+                totalLength = newTotalLength;
                 updateProgress();
                 ticking = false;
             });
         }
 
-        // Добавляем слушатели событий (только для не-Safari)
-        if (!isSafari) {
-            window.addEventListener('scroll', onScroll, { passive: true });
-            window.addEventListener('resize', onResize);
-        } else {
-            // Для Safari только resize для обновления переменной
-            window.addEventListener('resize', onResize);
-        }
+        // Добавляем слушатели событий
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onResize);
 
         // Запускаем начальную отрисовку
         updateProgress();
 
-        // Очистка при выгрузке страницы
+        // Очистка
         window.addEventListener('beforeunload', () => {
-            if (!isSafari) {
-                window.removeEventListener('scroll', onScroll);
-            }
+            window.removeEventListener('scroll', onScroll);
             window.removeEventListener('resize', onResize);
             if (rafId) {
                 cancelAnimationFrame(rafId);
             }
         });
 
-        console.log('Скрипт инициализирован - для Safari используется CSS-трансформация');
+        console.log('Скрипт инициализирован - режим Safari:', isSafari ? 'включен (инверсия для всех сегментов)' : 'выключен');
     }
 })();
