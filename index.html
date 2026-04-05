@@ -261,17 +261,39 @@
     </footer>
   
   </div>
-
-
-
-<script src="js/music.js" defer></script>
-
-  <script src="js/timer.js" defer></script>
-  <script src="js/form.js" defer></script>
-  <script src="js/glowing-line.js" defer></script>
-  <script src="js/glowing-line2.js" defer></script>
-  <script src="js/glowing-line2.js" defer></script>
-  <script src="js/glowing-line-safari.js" defer></script>
-<script src="js/glowing-line2-safari.js" defer></script>
+  
+  <script>
+      // Определяем Safari (работает на iOS и macOS)
+      function isSafari() {
+          const ua = navigator.userAgent;
+          const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua);
+          const isIOS = /iPad|iPhone|iPod/.test(ua);
+          return isSafari || isIOS;
+      }
+  
+      // Подключаем нужный скрипт
+      if (isSafari()) {
+          // Для Safari - исправленная версия
+          const script = document.createElement('script');
+          script.src = '/js/page-scroll-reveal-safari.js';
+          document.head.appendChild(script);
+      } else {
+          // Для остальных браузеров - оригинальная версия
+          const desctopscript = document.createElement('script');
+          desctopscript.src = '/js/glowing-line.js';
+          document.head.appendChild(desctopscript);
+          const mobilescript = document.createElement('script');
+          mobilescript.src = '/js/glowing-line2.js';
+          document.head.appendChild(mobilescript);
+      }
+    </script>
+  
+    <script src="js/music-visualizer.js" defer></script>
+    <script src="js/timer.js" defer></script>
+    <script src="js/form.js" defer></script>
+    <!--<script src="js/glowing-line.js" defer></script>-->
+    <!--<script src="js/glowing-line2.js" defer></script>-->
+    <!--<script src="js/glowing-line-safari.js" defer></script>-->
+    <!--<script src="js/glowing-line2-safari.js" defer></script>-->
 </body>
 </html>
