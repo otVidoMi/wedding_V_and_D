@@ -80,9 +80,9 @@
                 totalLength += length;
 
                 // Начальное состояние
-                path.style.strokeDasharray = length;
+                path.style.strokeDasharray = 0;
                 // Для Safari 0, а для других браузеров начинаем со скрытого length
-                path.style.strokeDashoffset = length;
+                path.style.strokeDashoffset = 0;
                 
                 path.style.strokeOpacity = '1';
             } catch (e) {
