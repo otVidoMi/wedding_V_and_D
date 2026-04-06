@@ -9,15 +9,14 @@
   padding: 0;
   box-sizing: border-box;
 }
-html{
-    overflow-x: hidden;
-  }
 
+html {
+  overflow-x: hidden;
+}
 
 body {
   font-family: "Annabelle-Regular";
   background-color: #fff;
-  overflow-x: hidden;
 }
 
 h1 {
@@ -30,26 +29,32 @@ h1 {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-  overflow-x: hidden;
 }
 
 /* ========== ДЕКОРАТИВНЫЙ SVG ФОН ========== */
 .bg-floral-ornament {
   position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  height: auto;
-  left: 0px;
-  right: 0px;
   top: 146px;
-  
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+  overflow-x: hidden;
+  object-fit: cover;
 }
 
-.bg-floral-ornament_2{
+.bg-floral-ornament {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  min-width: 1200px;
+  max-width: none;
+}
+
+.bg-floral-ornament_2 {
   display: none;
 }
-
-
 
 /* ========== ОБЩИЕ СТИЛИ ========== */
 section, header, footer {
@@ -78,8 +83,6 @@ h2 {
   font-size: 32px;
   margin-bottom: 106px;
 }
-
-
 
 .header__date-separator {
   color: #cb0609;
@@ -137,8 +140,8 @@ h2 {
   inset: 0;
   background-image: url(./image/Rectangle_1_113.png);
   background-position: center;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   z-index: -1;
   width: 1039px;
   height: 331px;
@@ -205,36 +208,33 @@ h2 {
   z-index: 1;
 }
 
-/* Контейнер для дней недели */
 .calendar__days {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 115px; /* Добавляем отступы между днями */
+  gap: 115px;
   max-width: 729.56px;
   margin: 0 auto;
   position: relative;
   z-index: 2;
 }
 
-/* Контейнер для чисел */
 .calendar__numbers {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 115px; /* Добавляем отступы между числами */
+  gap: 115px;
   max-width: 729.56px;
   margin: 36px auto;
   position: relative;
   z-index: 2;
 }
 
-/* Контейнер для месяцев */
 .calendar__months {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 115px; /* Добавляем отступы между месяцами */
+  gap: 115px;
   max-width: 729.56px;
   margin: 36px auto 0;
   position: relative;
@@ -432,7 +432,6 @@ h2 {
   flex-direction: column;
   align-items: center;
   z-index: 2;
-  
 }
 
 .timer__content::before {
@@ -445,7 +444,7 @@ h2 {
   background-image: url(./image/Rectangle_1_63.png);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100% 100%; 
+  background-size: 100% 100%;
   pointer-events: none;
 }
 
@@ -512,9 +511,10 @@ h2 {
   margin-top: 499px;
 }
 
-.wishes__title{
+.wishes__title {
   margin-bottom: 50px;
 }
+
 .wishes__text {
   font-size: 32px;
   text-align: center;
@@ -565,7 +565,6 @@ h2 {
 }
 
 /* ========== КАСТОМНЫЕ РАДИОКНОПКИ ========== */
-/* Скрываем стандартные радиокнопки */
 .form__radio input {
   position: absolute;
   opacity: 0;
@@ -575,7 +574,6 @@ h2 {
   padding: 0;
 }
 
-/* Контейнер для радиокнопки */
 .form__radio {
   display: flex;
   align-items: center;
@@ -590,7 +588,6 @@ h2 {
   min-height: 35px;
 }
 
-/* Кастомный квадратик */
 .form__radio .custom-radio {
   position: absolute;
   left: 0;
@@ -605,13 +602,11 @@ h2 {
   box-sizing: border-box;
 }
 
-/* Стиль для выбранного состояния */
 .form__radio input:checked + .custom-radio {
   background-color: #cb0609;
   border-color: #cb0609;
 }
 
-/* Галочка для выбранного состояния */
 .form__radio input:checked + .custom-radio::after {
   content: '♡';
   position: absolute;
@@ -624,39 +619,31 @@ h2 {
   line-height: 1;
 }
 
-
-
-/* Ховер эффект */
 .form__radio:hover input:not(:checked) + .custom-radio {
   border-color: #000000;
   background-color: #fff5f5;
 }
 
-/* Ховер эффект для выбранного состояния */
 .form__radio:hover input:checked + .custom-radio {
   background-color: #a00407;
   border-color: #a00407;
 }
 
-/* Фокус для доступности */
 .form__radio input:focus + .custom-radio {
   box-shadow: 0 0 0 2px rgba(203, 6, 9, 0.3);
   outline: none;
 }
 
-/* Активное состояние (при нажатии) */
 .form__radio input:active + .custom-radio {
   transform: translateY(-50%) scale(0.95);
 }
 
-/* Текст радиокнопки */
 .form__radio .radio-text {
   display: inline-block;
   line-height: 1.2;
 }
 
 /* ========== КАСТОМНЫЕ ЧЕКБОКСЫ ========== */
-/* Скрываем стандартные чекбоксы */
 .form__checkbox input {
   position: absolute;
   opacity: 0;
@@ -666,7 +653,6 @@ h2 {
   padding: 0;
 }
 
-/* Контейнер для чекбокса */
 .form__checkbox {
   display: block;
   align-items: center;
@@ -681,7 +667,6 @@ h2 {
   min-height: 35px;
 }
 
-/* Кастомный квадратик */
 .form__checkbox .custom-checkbox {
   position: absolute;
   left: 0;
@@ -696,13 +681,11 @@ h2 {
   box-sizing: border-box;
 }
 
-/* Стиль для выбранного состояния */
 .form__checkbox input:checked + .custom-checkbox {
   background-color: #cb0609;
   border-color: #cb0609;
 }
 
-/* Галочка для выбранного состояния */
 .form__checkbox input:checked + .custom-checkbox::after {
   content: '♡';
   position: absolute;
@@ -715,27 +698,20 @@ h2 {
   line-height: 1;
 }
 
-
-
-/* Ховер эффект */
 .form__checkbox:hover input:not(:checked) + .custom-checkbox {
   border-color: #000000;
   background-color: #fff5f5;
 }
 
-/* Ховер эффект для выбранного состояния */
 .form__checkbox:hover input:checked + .custom-checkbox {
   background-color: #a00407;
   border-color: #a00407;
 }
 
-
-/* Активное состояние (при нажатии) */
 .form__checkbox input:active + .custom-checkbox {
   transform: translateY(-50%) scale(0.95);
 }
 
-/* Текст чекбокса */
 .form__checkbox .checkbox-text {
   display: inline-block;
   line-height: 1.2;
@@ -792,17 +768,16 @@ h2 {
   cursor: not-allowed;
 }
 
-
-
 /* ========== КОНТАКТЫ ========== */
 .contacts {
   text-align: center;
   margin-top: 310px;
 }
 
-.contacts__title{
+.contacts__title {
   margin-bottom: 50px;
 }
+
 .contacts__description {
   font-size: 32px;
   letter-spacing: 0.2em;
@@ -851,17 +826,15 @@ h2 {
 }
 
 .footer__bg {
-  
   background-image: url(./image/photo_2.png);
-background-size: contain;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
   text-align: center;
   margin: 0 auto;
-width: 1055px;
-height: 716px;
-
+  width: 1055px;
+  height: 716px;
 }
 
 .footer__farewell {
@@ -894,655 +867,27 @@ height: 716px;
 }
 
 .footer__decor {
-position: absolute;
-width: 1055px;
-height: 716px;
-top: 0;
-
-background: #FFFFFF;
-border: 3px solid #CB0609;
-transform: rotate(-5deg);
-z-index: -1;
-}
-
-
-@media (max-width: 470px) {
-  html, body {
-    overflow-x: hidden;
-    max-width: 100%;
-  }
-  
-  .wedding-container {
-    overflow-x: hidden;
-    max-width: 100%;
-  }
-  
-.header__heart{
   position: absolute;
-   background-image: url(./image/adaptive_5.png);
-width: 43.68px;
-height: 39px;
-left: 80%;
-background-size: contain;
-top: 21%;
-}
-  .bg-floral-ornament {
-    display: none;
-    width: 100%;
-  }
-
-  .bg-floral-ornament_2{
-    display: block;
-    position: absolute;
-    top: 99px;
-    left: 50%;
-     transform: translateX(calc(-50%));
-    overflow: hidden;
-    z-index: -2;
-  }
-
-  /* body {
-    background-image: url('image/Vector_adaptive.png');
-    background-repeat: no-repeat;
-    background-position: top 99px center;
-     background-size: auto auto;
-  } */
-  
-  
-
-  .header {
-    margin-top: 47px;
-    margin-bottom: 134px;
-  }
-  .header__date {
-    font-size: 20px;
-    margin-bottom: 47px;
-  }
-  .header__date-separator {
-  margin: 0 5px;
-}
-  .header__title {
-    font-size: 40px;
-    margin-bottom: 40px;
-  }
-
-  .header__photo {
-    width: 237px;
-    height: 322px;
-  }
-  .header__rectangle{
-    width: 237px;
-    height: 322px;
-  }
-.welcome__div{
-  min-height: 194px;
-}
-
-  .welcome__photo-bg {
-    width: 344px;
-    height: 194px;
-   background-image: url(./image/adaptive_1.png);
-  }
-  .welcome__text {
-    width: 312px;
-    font-size: 14px;
-  }
-
-  .welcome__bg {
-    width: 344px;
-    height: 193px;
-    border: 2px solid #CB0609;
-}
-
-.calendar {
-  margin-top: 108px;
-}
-
-.calendar__decoration {
-  left: 50%;
-  transform: translateX(-50%);
-  width: 380px;
-  height: 142.51px;
-}
-
-.calendar__days{
-  gap:0;
-  flex-wrap: nowrap;
-}
-
-.calendar__day {
-  font-size: 13px;
-  padding-top: 10px;
-}
-
-.calendar__months{
-  margin-top: 10px;
-  gap: 0;
-  flex-wrap: nowrap;
-}
-
-.calendar__month{
-  font-size: 20px;
-}
-
-.calendar__numbers{
-  gap: 0;
-  margin-top: 10px;
-  flex-wrap: nowrap;
-}
-.calendar__number{
-  font-size: 45px;
-}
-
-.calendar__vector{
-  width: 203px;
-  height: 216px;
-  top: -15%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.venue {
-  margin-top: 108px;
-  margin-bottom: 80px;
-}
-
-.venue__title{
-  font-size: 40px;
-  margin-bottom: 45px;
-}
-
-.venue__address{
-  font-size: 16px;
-  margin-bottom: 37px;
-}
-
-.venue__photo{
-width: 310px;
-height: 201px;
-}
-
-.venue__button{
-width: 226px;
-height: 39px;
-font-size: 16px;
-}
-
-.timing__title{
-  font-size: 40px;
-  margin-bottom: 37px;
-}
-
-.timer__decor{
-    width: 380px;
-    height: 250px;
-    border: 2px solid #CB0609;
-
-}
-
-.timing__time, .timing__event {
-  font-size: 20px;
-}
-
-.timing__grid, .timing__grid__2{
-  gap: 23px;
-  justify-content: flex-start;
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-
-.timing__grid{
-  margin-bottom: 23px;
-}
-
-.timing__item{
-   width: fit-content;
-  font-size: 20px;
-}
-
-.timing__grid .timing__item {
-  max-width: 149px;
-}
-
-.timing__item__long{
-  width: 85px;
-}
-
-.timing__item:nth-child(odd), .timing__grid__2 .timing__item:nth-child(even){
-  margin-left: 20px;
-}
-.timing__item.t_2{
-  margin-left: 20px;
-}
-.timing__item:nth-child(even){
-  margin-right: 20px;
-  margin-left: auto;
-}
-.timing__grid__2 .timing__item.timing__item__long{
-  margin-left: 20px;
-}
-
-.timing__grid__2 .timing__item:nth-child(odd){
-  margin-right: 20px;
-  margin-left: auto;
-}
-
-
-.cont_1, .cont_1_event, .cont_2, .cont_2_event, .cont_3, .cont_3_event, .cont_4, .cont_4_event{
-  font-size: 0;
-}
-.cont_1::before {
-  font-size: 20px;
-  content: "15:00";
-}
-
-.cont_1_event::before{
-  font-size: 20px;
-  content: "Выездная церемония";
-}
-
-.cont_2::before{
-  font-size: 20px;
-    content: "16:00";
-}
-
-.cont_2_event::before{
-  font-size: 20px;
-  content: "Велком";
-}
-
-.cont_3::before{
-  font-size: 20px;
-    content: "17:00";
-}
-
-.cont_3_event::before{
-  font-size: 20px;
-  content: "Начало банкета";
-}
-
-.cont_4::before{
-  font-size: 20px;
-    content: "22:00";
-}
-
-.cont_4_event::before{
-  font-size: 20px;
-  content: "Финал";
-}
-
-.timing{
-  margin-top: 87px;
-  margin-bottom: 80px;
-}
-
-.dresscode{
-  margin-bottom: 75px;
-}
-
-.dresscode__title{
-  font-size: 40px;
-  margin-bottom: 35px;
-}
-
-.dresscode__text{
-width: 325px;
-height: 100px;
-font-size: 14px;
-margin-bottom: 33px;
-}
-
-.dresscode__colors{
-  gap: 20px;
-}
-
-.color img{
-width: 49px;
-height: 51px;
-}
-
-.color_1{
-  padding-left: 0;
-}
-
-.color_5{
-  padding-right: 0;
-}
-
-.color_6, .color_9{
-  padding: 0;
-}
-
-.timer{
-  min-height: 250px;
-  margin-top: 75px;
-}
-
-.timer__title{
-  font-size: 40px;
-  margin-top: 27px;
-  margin-bottom: 36px;
-}
-
-.timer__unit{
-  width: 64px;
-}
-
-.timer__number{
-  font-size: 32px;
-  line-height: 35px;
-}
-
-.timer__label{
-  font-size: 14px;
-}
-
-.timer__digits{
-  width: 320px;
-}
-
-.timer__content{
-  width: 381px;
-  min-height: 250px;
-}
-
-.timer__content::before{
-    background-image: url(./image/adaptive_2.png);
-}
-
-.timing__grid__2 .timing__item {
-    width: 144px;
-}
-
-.wishes{
-  margin-top: 82px;
-}
-
-.wishes__title{
-font-size: 40px;
-margin-bottom: 25px;
-}
-
-.wishes__text{
-max-width: 308px;
-font-size: 14px;
-margin-bottom: 32px;
-}
-
-.contacts{
-  margin-top: 121px;
-  margin-bottom: 142px;
-}
-
-.contacts__title{
-  font-size: 40px;
-  margin-bottom: 25px;
-}
-
-.contacts__description{
-max-width: 328px;
-font-size: 14px;
-}
-
-.contacts__name{
-  font-size: 36px;
-  margin-bottom: 30px;
-}
-
-.contacts__phone{
-  font-size: 29px;
-  margin-bottom: 33px;
-}
-
-.contacts__button{
-max-width: 226px;
-font-size: 16px;
-padding: 8px 0;
-
-}
-
-.form__title{
-  font-size: 40px;
-  margin-bottom: 15px;
-}
-
-.form__deadline{
-  font-size: 16px;
-  line-height: 23px;
-}
-
-.form__deadline-date{
-  font-size: 32px;
-  line-height: 32px;
-  margin-top: 23px;
-  margin-bottom: 21px;
-}
-
-.form__label{
-  font-size: 19px;
-  margin-bottom: 9px;
-}
-
-.form__input, .form__textarea{
-  font-size: 17px;
-  border: 1px solid #000;
-  padding: 10px 15px;
-}
-
-.form__group{
-  margin-top: 17px;
-  margin-bottom: 17px;
-}
-
-.form__radio{
-padding-left: 20px;
-margin-bottom: 10px;
-min-height: 21px;
-}
-
-.form__radio .custom-radio{
-width: 16px;
-height: 16px;
-border-radius: 4px;
-    border: 1px solid #000000;
-}
-.form__radio .radio-text{
-  font-size: 15px;
-}
-
-.form__radio input:checked + .custom-radio::after{
-  font-size: 13px;
-}
-
-.form__checkbox{
-  
-padding-left: 20px;
-margin-bottom: 10px;
-min-height: 21px;
-font-size: 15px;
-}
-
-.form__checkbox .custom-checkbox{
-width: 16px;
-height: 16px;
-border-radius: 4px;
-    border: 1px solid #000000;
-}
-
-.form__checkbox input:checked + .custom-checkbox::after{
-  font-size: 13px;
-}
-
-.form__checkbox .checkbox-text{
-  font-size: 15px;
-}
-
-.f2{
-  margin-bottom: 13px;
-}
-
-.form__textarea::placeholder{
-  font-size: 17px;
-}
-
-.form__textarea{
-  min-height: 40px;
-}
-
-.form__submit{
-  margin-top: 12px;
-font-size: 16px;
-padding: 8px 0;
-}
-
-.f3{
-  margin-bottom: 12px;
-}
-
-.venue__photo__decor{
-    width: 310px;
-    height: 201px;
-    border: 2px solid #CB0609;
-}
-
-.footer{
-  margin-top: 66px;
-  margin-bottom: 30px;
-}
-
-.footer__farewell p{
-  font-size: 16px;
-}
-
-.footer__farewell{
-  margin-bottom: 35px;
-}
-
-.footer__names{
-  font-size: 48px;
-  margin-bottom: 28px;
-}
-
-  .footer__bg {
-width: 347px;
-height: 236px;
-
-  }
-  .footer__decor {
-    width: 347px;
-    height: 236px;
-    border: 2px solid #CB0609;
-    left: 50%;
-    transform: translateX(-50%) rotate(-5deg);
-  }
-  .footer__heart{
-    background-image: url(./image/adaptive_3.png);
-width: 35px;
-height: 31.46px;
-bottom: -15px;
-  }
-  
-}
-
-@media (max-width: 375px) {
-  .bg-floral-ornament_2{
-    top: 75px;
-  }
-
-
-  .welcome__photo-bg{
-  width: 300px;
-  }
-
-  .welcome__bg{
-    width: 300px;
-    left: 50%;
-  }
-
-  .calendar__months{
-    margin-top: 5px;
-  }
-
-  .calendar__day{
-    font-size: 10px;
-    padding-top: 23px;
-    min-width: 100px;
-  }
-
-  .calendar__month{
-    font-size: 15px;
-    
-    min-width: 100px;
-  }
-
-  .calendar__numbers{
-    margin-top: 5px;
-  }
-
-  .calendar__number{
-    font-size: 30px;
-    
-    min-width: 100px;
-  }
-
-      .calendar__vector {
-        width: 173px;
-        height: 200px;
-        top: -21%;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-
-      .footer__bg{
-        width: 335px;
-      }
-}
-
-
-
-/* ========== МУЗЫКАЛЬНЫЙ ПЛЕЕР С БАБОЧКОЙ (ЗАМЕТНЫЙ) ========== */
-
-/* Контейнер для кнопки-бабочки */
-/* Контейнер для кнопки-бабочки - в левом нижнем углу */
+  width: 1055px;
+  height: 716px;
+  top: 0;
+  background: #FFFFFF;
+  border: 3px solid #CB0609;
+  transform: rotate(-5deg);
+  z-index: -1;
+}
+
+/* ========== МУЗЫКАЛЬНЫЙ ПЛЕЕР ========== */
 .music-player {
   position: fixed;
   bottom: 20px;
-  left: 20px;        /* ← было right: 20px */
+  left: 20px;
   z-index: 9999;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* Подсказка рядом с кнопкой */
-.music-hint {
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  pointer-events: none;
-  animation: hintPulse 1.5s ease-in-out infinite;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-@keyframes hintPulse {
-  0%, 100% {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.03);
-  }
-}
-
-/* Стили кнопки-бабочки с фоном */
 .music-btn {
   width: 55px;
   height: 55px;
@@ -1558,9 +903,9 @@ bottom: -15px;
   outline: none;
   padding: 0;
   box-shadow: 0 4px 15px rgba(203, 6, 9, 0.4);
+  animation: gentleFloat 2s ease-in-out infinite;
 }
 
-/* Анимация пульсации вокруг кнопки */
 .music-btn::before {
   content: '';
   position: absolute;
@@ -1590,13 +935,11 @@ bottom: -15px;
   }
 }
 
-/* Убираем обводку при фокусе */
 .music-btn:focus,
 .music-btn:active {
   outline: none;
 }
 
-/* Иконка бабочки */
 .music-btn .butterfly {
   transition: all 0.3s ease;
   display: block;
@@ -1604,35 +947,31 @@ bottom: -15px;
   height: 60%;
 }
 
-/* Бабочка в состоянии паузы (белая) */
 .music-btn .butterfly path {
   stroke: #ffffff;
   stroke-width: 2;
   transition: stroke 0.3s ease;
 }
 
-/* Бабочка в состоянии воспроизведения (золотая) */
 .music-btn.playing .butterfly path {
   stroke: #000000;
 }
 
-/* Эффект при наведении */
 .music-btn:hover {
   transform: scale(1.08);
   background: #a00407;
   box-shadow: 0 6px 20px rgba(203, 6, 9, 0.5);
+  animation: none;
 }
 
 .music-btn:hover .butterfly path {
   stroke-width: 2.5;
 }
 
-/* Эффект при нажатии */
 .music-btn:active {
   transform: scale(0.95);
 }
 
-/* Анимация трепетания бабочки */
 @keyframes flutter {
   0%, 100% {
     transform: translateY(0) rotate(0deg);
@@ -1646,7 +985,6 @@ bottom: -15px;
   animation: flutter 1.2s ease-in-out infinite;
 }
 
-/* Плавное покачивание кнопки для привлечения внимания */
 @keyframes gentleFloat {
   0%, 100% {
     transform: translateY(0);
@@ -1656,39 +994,613 @@ bottom: -15px;
   }
 }
 
-.music-btn {
-  animation: gentleFloat 2s ease-in-out infinite;
-}
-
-/* Останавливаем покачивание при наведении и когда музыка играет */
-.music-btn:hover,
 .music-btn.playing {
   animation: none;
 }
 
-.music-btn.playing {
-  animation: none;
-}
-
-/* Скрытый аудиоплеер */
 .hidden-audio {
   display: none;
 }
 
 /* ========== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ ========== */
+@media (max-width: 475px) {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  
+  .wedding-container {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  
+  .header__heart {
+    position: absolute;
+    background-image: url(./image/adaptive_5.png);
+    width: 43.68px;
+    height: 39px;
+    left: 80%;
+    background-size: contain;
+    top: 21%;
+  }
+  
+  .bg-floral-ornament {
+    display: none;
+    width: 100%;
+  }
+
+  .bg-floral-ornament_2 {
+    display: block;
+    position: absolute;
+    top: 99px;
+    left: 50%;
+    transform: translateX(calc(-50%));
+    overflow: hidden;
+    z-index: -2;
+  }
+
+  .header {
+    margin-top: 47px;
+    margin-bottom: 134px;
+  }
+  
+  .header__date {
+    font-size: 20px;
+    margin-bottom: 47px;
+  }
+  
+  .header__date-separator {
+    margin: 0 5px;
+  }
+  
+  .header__title {
+    font-size: 40px;
+    margin-bottom: 40px;
+  }
+
+  .header__photo {
+    width: 237px;
+    height: 322px;
+  }
+  
+  .header__rectangle {
+    width: 237px;
+    height: 322px;
+  }
+  
+  .welcome__div {
+    min-height: 194px;
+  }
+
+  .welcome__photo-bg {
+    width: 344px;
+    height: 194px;
+    background-image: url(./image/adaptive_1.png);
+  }
+  
+  .welcome__text {
+    width: 312px;
+    font-size: 14px;
+  }
+
+  .welcome__bg {
+    width: 344px;
+    height: 193px;
+    border: 2px solid #CB0609;
+  }
+
+  .calendar {
+    margin-top: 108px;
+  }
+
+  .calendar__decoration {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 380px;
+    height: 142.51px;
+  }
+
+  .calendar__days {
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  .calendar__day {
+    font-size: 13px;
+    padding-top: 10px;
+  }
+
+  .calendar__months {
+    margin-top: 10px;
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  .calendar__month {
+    font-size: 20px;
+  }
+
+  .calendar__numbers {
+    gap: 0;
+    margin-top: 10px;
+    flex-wrap: nowrap;
+  }
+  
+  .calendar__number {
+    font-size: 45px;
+  }
+
+  .calendar__vector {
+    width: 203px;
+    height: 216px;
+    top: -15%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .venue {
+    margin-top: 108px;
+    margin-bottom: 80px;
+  }
+
+  .venue__title {
+    font-size: 40px;
+    margin-bottom: 45px;
+  }
+
+  .venue__address {
+    font-size: 16px;
+    margin-bottom: 37px;
+  }
+
+  .venue__photo {
+    width: 310px;
+    height: 201px;
+  }
+
+  .venue__button {
+    width: 226px;
+    height: 39px;
+    font-size: 16px;
+  }
+
+  .timing__title {
+    font-size: 40px;
+    margin-bottom: 37px;
+  }
+
+  .timer__decor {
+    width: 380px;
+    height: 250px;
+    border: 2px solid #CB0609;
+  }
+
+  .timing__time, .timing__event {
+    font-size: 20px;
+  }
+
+  .timing__grid, .timing__grid__2 {
+    gap: 23px;
+    justify-content: flex-start;
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .timing__grid {
+    margin-bottom: 23px;
+  }
+
+  .timing__item {
+    width: fit-content;
+    font-size: 20px;
+  }
+
+  .timing__grid .timing__item {
+    max-width: 149px;
+  }
+
+  .timing__item__long {
+    width: 85px;
+  }
+
+  .timing__item:nth-child(odd), .timing__grid__2 .timing__item:nth-child(even) {
+    margin-left: 20px;
+  }
+  
+  .timing__item.t_2 {
+    margin-left: 20px;
+  }
+  
+  .timing__item:nth-child(even) {
+    margin-right: 20px;
+    margin-left: auto;
+  }
+  
+  .timing__grid__2 .timing__item.timing__item__long {
+    margin-left: 20px;
+  }
+
+  .timing__grid__2 .timing__item:nth-child(odd) {
+    margin-right: 20px;
+    margin-left: auto;
+  }
+
+  .cont_1, .cont_1_event, .cont_2, .cont_2_event, .cont_3, .cont_3_event, .cont_4, .cont_4_event {
+    font-size: 0;
+  }
+  
+  .cont_1::before {
+    font-size: 20px;
+    content: "15:00";
+  }
+
+  .cont_1_event::before {
+    font-size: 20px;
+    content: "Выездная церемония";
+  }
+
+  .cont_2::before {
+    font-size: 20px;
+    content: "16:00";
+  }
+
+  .cont_2_event::before {
+    font-size: 20px;
+    content: "Велком";
+  }
+
+  .cont_3::before {
+    font-size: 20px;
+    content: "17:00";
+  }
+
+  .cont_3_event::before {
+    font-size: 20px;
+    content: "Начало банкета";
+  }
+
+  .cont_4::before {
+    font-size: 20px;
+    content: "22:00";
+  }
+
+  .cont_4_event::before {
+    font-size: 20px;
+    content: "Финал";
+  }
+
+  .timing {
+    margin-top: 87px;
+    margin-bottom: 80px;
+  }
+
+  .dresscode {
+    margin-bottom: 75px;
+  }
+
+  .dresscode__title {
+    font-size: 40px;
+    margin-bottom: 35px;
+  }
+
+  .dresscode__text {
+    width: 325px;
+    height: 100px;
+    font-size: 14px;
+    margin-bottom: 33px;
+  }
+
+  .dresscode__colors {
+    gap: 20px;
+  }
+
+  .color img {
+    width: 49px;
+    height: 51px;
+  }
+
+  .color_1 {
+    padding-left: 0;
+  }
+
+  .color_5 {
+    padding-right: 0;
+  }
+
+  .color_6, .color_9 {
+    padding: 0;
+  }
+
+  .timer {
+    min-height: 250px;
+    margin-top: 75px;
+  }
+
+  .timer__title {
+    font-size: 40px;
+    margin-top: 27px;
+    margin-bottom: 36px;
+  }
+
+  .timer__unit {
+    width: 64px;
+  }
+
+  .timer__number {
+    font-size: 32px;
+    line-height: 35px;
+  }
+
+  .timer__label {
+    font-size: 14px;
+  }
+
+  .timer__digits {
+    width: 320px;
+  }
+
+  .timer__content {
+    width: 381px;
+    min-height: 250px;
+  }
+
+  .timer__content::before {
+    background-image: url(./image/adaptive_2.png);
+  }
+
+  .timing__grid__2 .timing__item {
+    width: 144px;
+  }
+
+  .wishes {
+    margin-top: 82px;
+  }
+
+  .wishes__title {
+    font-size: 40px;
+    margin-bottom: 25px;
+  }
+
+  .wishes__text {
+    max-width: 308px;
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .contacts {
+    margin-top: 121px;
+    margin-bottom: 142px;
+  }
+
+  .contacts__title {
+    font-size: 40px;
+    margin-bottom: 25px;
+  }
+
+  .contacts__description {
+    max-width: 328px;
+    font-size: 14px;
+  }
+
+  .contacts__name {
+    font-size: 36px;
+    margin-bottom: 30px;
+  }
+
+  .contacts__phone {
+    font-size: 29px;
+    margin-bottom: 33px;
+  }
+
+  .contacts__button {
+    max-width: 226px;
+    font-size: 16px;
+    padding: 8px 0;
+  }
+
+  .form__title {
+    font-size: 40px;
+    margin-bottom: 15px;
+  }
+
+  .form__deadline {
+    font-size: 16px;
+    line-height: 23px;
+  }
+
+  .form__deadline-date {
+    font-size: 32px;
+    line-height: 32px;
+    margin-top: 23px;
+    margin-bottom: 21px;
+  }
+
+  .form__label {
+    font-size: 19px;
+    margin-bottom: 9px;
+  }
+
+  .form__input, .form__textarea {
+    font-size: 17px;
+    border: 1px solid #000;
+    padding: 10px 15px;
+  }
+
+  .form__group {
+    margin-top: 17px;
+    margin-bottom: 17px;
+  }
+
+  .form__radio {
+    padding-left: 20px;
+    margin-bottom: 10px;
+    min-height: 21px;
+  }
+
+  .form__radio .custom-radio {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #000000;
+  }
+  
+  .form__radio .radio-text {
+    font-size: 15px;
+  }
+
+  .form__radio input:checked + .custom-radio::after {
+    font-size: 13px;
+  }
+
+  .form__checkbox {
+    padding-left: 20px;
+    margin-bottom: 10px;
+    min-height: 21px;
+    font-size: 15px;
+  }
+
+  .form__checkbox .custom-checkbox {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #000000;
+  }
+
+  .form__checkbox input:checked + .custom-checkbox::after {
+    font-size: 13px;
+  }
+
+  .form__checkbox .checkbox-text {
+    font-size: 15px;
+  }
+
+  .f2 {
+    margin-bottom: 13px;
+  }
+
+  .form__textarea::placeholder {
+    font-size: 17px;
+  }
+
+  .form__textarea {
+    min-height: 40px;
+  }
+
+  .form__submit {
+    margin-top: 12px;
+    font-size: 16px;
+    padding: 8px 0;
+  }
+
+  .f3 {
+    margin-bottom: 12px;
+  }
+
+  .venue__photo__decor {
+    width: 310px;
+    height: 201px;
+    border: 2px solid #CB0609;
+  }
+
+  .footer {
+    margin-top: 66px;
+    margin-bottom: 30px;
+  }
+
+  .footer__farewell p {
+    font-size: 16px;
+  }
+
+  .footer__farewell {
+    margin-bottom: 35px;
+  }
+
+  .footer__names {
+    font-size: 48px;
+    margin-bottom: 28px;
+  }
+
+  .footer__bg {
+    width: 347px;
+    height: 236px;
+  }
+  
+  .footer__decor {
+    width: 347px;
+    height: 236px;
+    border: 2px solid #CB0609;
+    left: 50%;
+    transform: translateX(-50%) rotate(-5deg);
+  }
+  
+  .footer__heart {
+    background-image: url(./image/adaptive_3.png);
+    width: 35px;
+    height: 31.46px;
+    bottom: -15px;
+  }
+}
+
+@media (max-width: 375px) {
+  .bg-floral-ornament_2 {
+    top: 75px;
+  }
+
+  .welcome__photo-bg {
+    width: 300px;
+  }
+
+  .welcome__bg {
+    width: 300px;
+    left: 50%;
+  }
+
+  .calendar__months {
+    margin-top: 5px;
+  }
+
+  .calendar__day {
+    font-size: 10px;
+    padding-top: 23px;
+    min-width: 100px;
+  }
+
+  .calendar__month {
+    font-size: 15px;
+    min-width: 100px;
+  }
+
+  .calendar__numbers {
+    margin-top: 5px;
+  }
+
+  .calendar__number {
+    font-size: 30px;
+    min-width: 100px;
+  }
+
+  .calendar__vector {
+    width: 173px;
+    height: 200px;
+    top: -21%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .footer__bg {
+    width: 335px;
+  }
+}
 
 @media (max-width: 768px) {
   .music-btn {
     width: 48px;
     height: 48px;
   }
+  
   .music-player {
     bottom: 15px;
-    right: 15px;
-  }
-  .music-hint {
-    font-size: 11px;
-    padding: 6px 12px;
+    left: 15px;
   }
 }
 
@@ -1697,16 +1609,13 @@ bottom: -15px;
     width: 45px;
     height: 45px;
   }
+  
   .music-player {
     bottom: 10px;
-    right: 10px;
-  }
-  .music-hint {
-    display: none;  /* на маленьких экранах убираем подсказку */
+    left: 10px;
   }
 }
 
-/* Анимация появления кнопки */
 @keyframes fadeInUp {
   from {
     opacity: 0;
