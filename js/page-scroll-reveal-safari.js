@@ -1,56 +1,52 @@
-// glowing-line-safari.js (для первого SVG - bg-floral-ornament)
-// Скрипт для анимированного прорисовывания SVG-линии при скролле страницы
-// Адаптирован для первого SVG орнамента (bg-floral-ornament)
-
+// glowing-line-safari.js - С РЕГУЛИРУЕМОЙ СКОРОСТЬЮ
 (function () {
-    // ===== УПРАВЛЕНИЕ ЗАГРУЗКОЙ ДОКУМЕНТА =====
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
 
-    /**
-     * Главная функция инициализации
-     */
+    // ===== НАСТРОЙКИ СКОРОСТИ =====
+    const CONFIG = {
+        // Режим прогресса: 'full' (вся страница), 'fast' (ускоренный), 'half' (первая половина)
+        mode: 'fast',
+        
+        // Для режима 'fast' - множитель скорости (1 = нормально, 2 = в 2 раза быстрее, 3 = в 3 раза)
+        speedMultiplier: 2,
+        
+        // Для режима 'custom' - начало и конец анимации (от 0 до 1)
+        startAt: 0.1,  // Начинаем рисовать после 10% скролла
+        endAt: 0.5     // Заканчиваем рисовать на 50% скролла
+    };
+
     function init() {
-        // ===== ПОИСК ЭЛЕМЕНТОВ =====
-        // Ищем родительский SVG элемент с классом .bg-floral-ornament (первый SVG)
         const svgElement = document.querySelector('.bg-floral-ornament');
         if (!svgElement) {
             console.log('SVG элемент .bg-floral-ornament не найден');
             return;
         }
 
-        // Ищем внутри SVG все элементы <path> (в первом SVG их несколько)
         const svgPaths = svgElement.querySelectorAll('path');
         if (!svgPaths.length) {
             console.log('Path элементы не найдены в SVG');
             return;
         }
 
-        console.log(`Найдено ${svgPaths.length} path элементов в .bg-floral-ornament`);
+        console.log(`Найдено ${svgPaths.length} path элементов`);
 
-        // Пространство имён SVG
         const svgNS = "http://www.w3.org/2000/svg";
-
-        // ===== ОПРЕДЕЛЕНИЕ SAFARI =====
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        console.log('Браузер Safari (первый SVG):', isSafari);
+        console.log('Браузер Safari:', isSafari);
 
-        // ===== ОБРАБОТКА КАЖДОГО PATH ЭЛЕМЕНТА =====
-        // Сохраняем все новые пути и их длины
         const pathsData = [];
 
         svgPaths.forEach((originalPath, index) => {
-            // Сохраняем оригинальные атрибуты
             const originalStroke = originalPath.getAttribute('stroke') || '#cb0609';
             const originalWidth = originalPath.getAttribute('stroke-width') || '3';
             const dAttribute = originalPath.getAttribute('d');
             
             if (!dAttribute) return;
 
-            // Создаём новый path элемент
             const newPath = document.createElementNS(svgNS, 'path');
             newPath.setAttribute('d', dAttribute);
             newPath.setAttribute('stroke', originalStroke);
@@ -59,11 +55,9 @@
             newPath.setAttribute('stroke-linecap', 'round');
             newPath.setAttribute('stroke-linejoin', 'round');
 
-            // Заменяем старый path новым
             originalPath.remove();
             svgElement.appendChild(newPath);
 
-            // Вычисляем длину пути
             let pathLength = 0;
             try {
                 pathLength = newPath.getTotalLength();
@@ -72,25 +66,13 @@
                 return;
             }
 
-            // Настраиваем dash-анимацию
             newPath.style.strokeDasharray = pathLength;
-
-            if (isSafari) {
-                // Safari: начинаем с полностью видимой линии
-                newPath.style.strokeDashoffset = '0';
-            } else {
-                // Обычные браузеры: начинаем со скрытой линии
-                newPath.style.strokeDashoffset = pathLength;
-            }
-
+            newPath.style.strokeDashoffset = pathLength; // Начинаем со скрытой линии
             newPath.style.strokeOpacity = '1';
 
-            // Сохраняем данные для анимации
             pathsData.push({
                 path: newPath,
-                length: pathLength,
-                originalStroke: originalStroke,
-                originalWidth: originalWidth
+                length: pathLength
             });
         });
 
@@ -99,53 +81,58 @@
             return;
         }
 
-  /**
- * ВЫЧИСЛЕНИЕ ПРОГРЕССА СКРОЛЛА (УСКОРЕННАЯ ВЕРСИЯ)
- */
-function getScrollProgress() {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-    const maxScroll = documentHeight - windowHeight;
-    
-    // ===== ВАРИАНТ 1: ПРОГРЕСС ОТ ВСЕГО СКРОЛЛА СТРАНИЦЫ =====
-    // Самый простой и быстрый вариант - линия рисуется пропорционально скроллу всей страницы
-    let progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
-    
-    // ===== ВАРИАНТ 2: УСКОРЕННОЕ ПОЯВЛЕНИЕ (раскомментируйте если нужно) =====
-    // Линия появляется быстрее - уже при 50% скролла будет нарисована полностью
-    // progress = Math.min(1, progress * 1.5); // В 1.5 раза быстрее
-    // progress = Math.min(1, progress * 2);   // В 2 раза быстрее
-    
-    return Math.min(1, Math.max(0, progress));
-}
-
         /**
-         * ОБНОВЛЕНИЕ СОСТОЯНИЯ ОТРИСОВКИ ВСЕХ ЛИНИЙ
+         * ВЫЧИСЛЕНИЕ ПРОГРЕССА СКРОЛЛА С УСКОРЕНИЕМ
          */
+        function getScrollProgress() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const documentHeight = document.documentElement.scrollHeight;
+            const windowHeight = window.innerHeight;
+            const maxScroll = documentHeight - windowHeight;
+            
+            let progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+            
+            switch (CONFIG.mode) {
+                case 'fast':
+                    // Ускоренное появление
+                    progress = Math.min(1, progress * CONFIG.speedMultiplier);
+                    break;
+                    
+                case 'half':
+                    // Линия полностью рисуется на первой половине страницы
+                    progress = maxScroll > 0 ? scrollTop / (maxScroll * 0.5) : 0;
+                    progress = Math.min(1, progress);
+                    break;
+                    
+                case 'custom':
+                    // Кастомный диапазон
+                    if (progress <= CONFIG.startAt) {
+                        progress = 0;
+                    } else if (progress >= CONFIG.endAt) {
+                        progress = 1;
+                    } else {
+                        progress = (progress - CONFIG.startAt) / (CONFIG.endAt - CONFIG.startAt);
+                    }
+                    break;
+                    
+                default:
+                    // Обычный режим (вся страница)
+                    break;
+            }
+            
+            return Math.min(1, Math.max(0, progress));
+        }
+
         function updateProgress() {
             const scrollProgress = getScrollProgress();
             
-            // Для отладки (редко)
-            if (Math.random() < 0.01) {
-                console.log('Progress (первый SVG):', scrollProgress.toFixed(3));
-            }
-
             pathsData.forEach(data => {
-                if (isSafari) {
-                    // Safari: при progress=0 offset = длина (ничего не видно)
-                    // при progress=1 offset = 0 (видно всё)
-                    const offset = data.length * (1 - scrollProgress);
-                    data.path.style.strokeDashoffset = offset;
-                } else {
-                    // Обычные браузеры: offset уменьшается от длины до 0
-                    const offset = data.length * (1 - scrollProgress);
-                    data.path.style.strokeDashoffset = offset;
-                }
+                // Линия рисуется от длины до 0
+                const offset = data.length * (1 - scrollProgress);
+                data.path.style.strokeDashoffset = offset;
             });
         }
 
-        // ===== ОПТИМИЗАЦИЯ ПРОИЗВОДИТЕЛЬНОСТИ =====
         let ticking = false;
         let rafId = null;
 
@@ -164,8 +151,6 @@ function getScrollProgress() {
                 cancelAnimationFrame(rafId);
             }
             rafId = requestAnimationFrame(() => {
-                // При ресайзе пересчитываем длины всех путей
-                let allValid = true;
                 pathsData.forEach(data => {
                     try {
                         const newLength = data.path.getTotalLength();
@@ -173,32 +158,18 @@ function getScrollProgress() {
                         data.path.style.strokeDasharray = newLength;
                     } catch (e) {
                         console.error('Ошибка при ресайзе:', e);
-                        allValid = false;
                     }
                 });
-                if (allValid) {
-                    updateProgress();
-                }
+                updateProgress();
                 ticking = false;
             });
         }
 
-        // ===== ПОДПИСКА НА СОБЫТИЯ =====
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('resize', onResize);
 
-        // ===== ПЕРВОНАЧАЛЬНАЯ ОТРИСОВКА =====
         updateProgress();
 
-        // ===== ОЧИСТКА РЕСУРСОВ =====
-        window.addEventListener('beforeunload', () => {
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onResize);
-            if (rafId) {
-                cancelAnimationFrame(rafId);
-            }
-        });
-
-        console.log(`Скрипт для .bg-floral-ornament инициализирован. Обработано ${pathsData.length} path элементов. Safari mode: ${isSafari}`);
+        console.log(`Скрипт инициализирован. Режим: ${CONFIG.mode}, ускорение: ${CONFIG.speedMultiplier}x`);
     }
 })();
