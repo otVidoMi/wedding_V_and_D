@@ -906,7 +906,7 @@ z-index: -1;
 }
 
 
-@media (max-width: 425px) {
+@media (max-width: 470px) {
   html, body {
     overflow-x: hidden;
     max-width: 100%;
