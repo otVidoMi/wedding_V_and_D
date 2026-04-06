@@ -1,20 +1,14 @@
 // glowing-line-safari.js (для первого SVG - bg-floral-ornament)
-// С УСКОРЕННЫМ ПОЯВЛЕНИЕМ ЛИНИИ
-
-// ===== НАСТРОЙКИ СКОРОСТИ (ОПРЕДЕЛЯЕМ В САМОМ НАЧАЛЕ) =====
-const CONFIG = {
-    // Режим прогресса: 'full' (вся страница), 'fast' (ускоренный), 'half' (первая половина)
-    mode: 'fast',
-    
-    // Для режима 'fast' - множитель скорости (1 = нормально, 2 = в 2 раза быстрее, 3 = в 3 раза)
-    speedMultiplier: 2,
-    
-    // Для режима 'custom' - начало и конец анимации (от 0 до 1)
-    startAt: 0.1,
-    endAt: 0.5
-};
 
 (function () {
+    // ===== НАСТРОЙКИ СКОРОСТИ (ВНУТРИ ФУНКЦИИ) =====
+    const CONFIG = {
+        mode: 'fast',           // 'full', 'fast', 'half', 'custom'
+        speedMultiplier: 2,     // ускорение в 2 раза
+        startAt: 0.1,
+        endAt: 0.5
+    };
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
@@ -65,7 +59,7 @@ const CONFIG = {
                 pathLength = newPath.getTotalLength();
                 console.log(`📏 Длина пути ${index}: ${pathLength}px`);
             } catch (e) {
-                console.error(`Ошибка получения длины пути ${index}:`, e);
+                console.error(`Ошибка:`, e);
                 return;
             }
 
@@ -80,13 +74,10 @@ const CONFIG = {
         });
 
         if (pathsData.length === 0) {
-            console.log('❌ Не удалось создать ни одного path элемента');
+            console.log('❌ Не удалось создать path элементы');
             return;
         }
 
-        /**
-         * ВЫЧИСЛЕНИЕ ПРОГРЕССА СКРОЛЛА С УСКОРЕНИЕМ
-         */
         function getScrollProgress() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const documentHeight = document.documentElement.scrollHeight;
@@ -155,9 +146,7 @@ const CONFIG = {
                         const newLength = data.path.getTotalLength();
                         data.length = newLength;
                         data.path.style.strokeDasharray = newLength;
-                    } catch (e) {
-                        console.error('Ошибка при ресайзе:', e);
-                    }
+                    } catch (e) {}
                 });
                 updateProgress();
                 ticking = false;
@@ -169,6 +158,6 @@ const CONFIG = {
 
         updateProgress();
 
-        console.log(`✨ Скрипт для .bg-floral-ornament инициализирован. Режим: ${CONFIG.mode}`);
+        console.log(`✨ Скрипт для .bg-floral-ornament запущен! Режим: ${CONFIG.mode}`);
     }
 })();
