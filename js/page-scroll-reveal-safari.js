@@ -1,4 +1,19 @@
-// glowing-line-safari.js - С РЕГУЛИРУЕМОЙ СКОРОСТЬЮ
+// glowing-line-safari.js (для первого SVG - bg-floral-ornament)
+// С УСКОРЕННЫМ ПОЯВЛЕНИЕМ ЛИНИИ
+
+// ===== НАСТРОЙКИ СКОРОСТИ (ОПРЕДЕЛЯЕМ В САМОМ НАЧАЛЕ) =====
+const CONFIG = {
+    // Режим прогресса: 'full' (вся страница), 'fast' (ускоренный), 'half' (первая половина)
+    mode: 'fast',
+    
+    // Для режима 'fast' - множитель скорости (1 = нормально, 2 = в 2 раза быстрее, 3 = в 3 раза)
+    speedMultiplier: 2,
+    
+    // Для режима 'custom' - начало и конец анимации (от 0 до 1)
+    startAt: 0.1,
+    endAt: 0.5
+};
+
 (function () {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -6,37 +21,24 @@
         init();
     }
 
-    // ===== НАСТРОЙКИ СКОРОСТИ =====
-    const CONFIG = {
-        // Режим прогресса: 'full' (вся страница), 'fast' (ускоренный), 'half' (первая половина)
-        mode: 'fast',
-        
-        // Для режима 'fast' - множитель скорости (1 = нормально, 2 = в 2 раза быстрее, 3 = в 3 раза)
-        speedMultiplier: 2,
-        
-        // Для режима 'custom' - начало и конец анимации (от 0 до 1)
-        startAt: 0.1,  // Начинаем рисовать после 10% скролла
-        endAt: 0.5     // Заканчиваем рисовать на 50% скролла
-    };
-
     function init() {
         const svgElement = document.querySelector('.bg-floral-ornament');
         if (!svgElement) {
-            console.log('SVG элемент .bg-floral-ornament не найден');
+            console.log('❌ SVG элемент .bg-floral-ornament не найден');
             return;
         }
 
         const svgPaths = svgElement.querySelectorAll('path');
         if (!svgPaths.length) {
-            console.log('Path элементы не найдены в SVG');
+            console.log('❌ Path элементы не найдены');
             return;
         }
 
-        console.log(`Найдено ${svgPaths.length} path элементов`);
+        console.log(`✅ Найдено ${svgPaths.length} path элементов`);
 
         const svgNS = "http://www.w3.org/2000/svg";
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        console.log('Браузер Safari:', isSafari);
+        console.log('🦊 Браузер Safari:', isSafari);
 
         const pathsData = [];
 
@@ -61,13 +63,14 @@
             let pathLength = 0;
             try {
                 pathLength = newPath.getTotalLength();
+                console.log(`📏 Длина пути ${index}: ${pathLength}px`);
             } catch (e) {
                 console.error(`Ошибка получения длины пути ${index}:`, e);
                 return;
             }
 
             newPath.style.strokeDasharray = pathLength;
-            newPath.style.strokeDashoffset = pathLength; // Начинаем со скрытой линии
+            newPath.style.strokeDashoffset = pathLength;
             newPath.style.strokeOpacity = '1';
 
             pathsData.push({
@@ -77,7 +80,7 @@
         });
 
         if (pathsData.length === 0) {
-            console.log('Не удалось создать ни одного path элемента');
+            console.log('❌ Не удалось создать ни одного path элемента');
             return;
         }
 
@@ -94,18 +97,13 @@
             
             switch (CONFIG.mode) {
                 case 'fast':
-                    // Ускоренное появление
                     progress = Math.min(1, progress * CONFIG.speedMultiplier);
                     break;
-                    
                 case 'half':
-                    // Линия полностью рисуется на первой половине страницы
                     progress = maxScroll > 0 ? scrollTop / (maxScroll * 0.5) : 0;
                     progress = Math.min(1, progress);
                     break;
-                    
                 case 'custom':
-                    // Кастомный диапазон
                     if (progress <= CONFIG.startAt) {
                         progress = 0;
                     } else if (progress >= CONFIG.endAt) {
@@ -114,9 +112,7 @@
                         progress = (progress - CONFIG.startAt) / (CONFIG.endAt - CONFIG.startAt);
                     }
                     break;
-                    
                 default:
-                    // Обычный режим (вся страница)
                     break;
             }
             
@@ -127,10 +123,13 @@
             const scrollProgress = getScrollProgress();
             
             pathsData.forEach(data => {
-                // Линия рисуется от длины до 0
                 const offset = data.length * (1 - scrollProgress);
                 data.path.style.strokeDashoffset = offset;
             });
+            
+            if (Math.random() < 0.02) {
+                console.log(`📊 Прогресс: ${(scrollProgress * 100).toFixed(1)}%`);
+            }
         }
 
         let ticking = false;
@@ -170,6 +169,6 @@
 
         updateProgress();
 
-        console.log(`Скрипт инициализирован. Режим: ${CONFIG.mode}, ускорение: ${CONFIG.speedMultiplier}x`);
+        console.log(`✨ Скрипт для .bg-floral-ornament инициализирован. Режим: ${CONFIG.mode}`);
     }
 })();
