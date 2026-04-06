@@ -99,34 +99,26 @@
             return;
         }
 
-        /**
-         * ВЫЧИСЛЕНИЕ ПРОГРЕССА СКРОЛЛА
-         */
-        function getScrollProgress() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-
-            const svgRect = svgElement.getBoundingClientRect();
-            const svgTop = svgRect.top + scrollTop;
-            const svgBottom = svgTop + svgRect.height;
-
-            // Анимация начинается, когда SVG появляется в нижней трети экрана
-            const startPoint = svgTop - windowHeight * 0.2;
-            // Анимация заканчивается, когда SVG почти ушёл вверх
-            const endPoint = svgBottom - windowHeight * 0.7;
-
-            let progress = 1;
-
-            if (scrollTop <= startPoint) {
-                progress = 0;
-            } else if (scrollTop >= endPoint) {
-                progress = 1;
-            } else {
-                progress = (scrollTop - startPoint) / (endPoint - startPoint);
-            }
-
-            return Math.min(1, Math.max(0, progress));
-        }
+  /**
+ * ВЫЧИСЛЕНИЕ ПРОГРЕССА СКРОЛЛА (УСКОРЕННАЯ ВЕРСИЯ)
+ */
+function getScrollProgress() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const maxScroll = documentHeight - windowHeight;
+    
+    // ===== ВАРИАНТ 1: ПРОГРЕСС ОТ ВСЕГО СКРОЛЛА СТРАНИЦЫ =====
+    // Самый простой и быстрый вариант - линия рисуется пропорционально скроллу всей страницы
+    let progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+    
+    // ===== ВАРИАНТ 2: УСКОРЕННОЕ ПОЯВЛЕНИЕ (раскомментируйте если нужно) =====
+    // Линия появляется быстрее - уже при 50% скролла будет нарисована полностью
+    // progress = Math.min(1, progress * 1.5); // В 1.5 раза быстрее
+    // progress = Math.min(1, progress * 2);   // В 2 раза быстрее
+    
+    return Math.min(1, Math.max(0, progress));
+}
 
         /**
          * ОБНОВЛЕНИЕ СОСТОЯНИЯ ОТРИСОВКИ ВСЕХ ЛИНИЙ
