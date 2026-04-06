@@ -81,13 +81,9 @@
 
                 // Начальное состояние
                 path.style.strokeDasharray = length;
-                if (isSafari) {
-                    // Для Safari начинаем с видимого состояния
-                    path.style.strokeDashoffset = '0';
-                } else {
-                    // Для других браузеров начинаем со скрытого
-                    path.style.strokeDashoffset = length;
-                }
+                // Для Safari 0, а для других браузеров начинаем со скрытого length
+                path.style.strokeDashoffset = length;
+                
                 path.style.strokeOpacity = '1';
             } catch (e) {
                 console.error('Ошибка при расчете длины сегмента', idx, e);
@@ -169,11 +165,11 @@
                     
                     // Разная логика для разных сегментов
                     if (idx === 2) {
-                        offset = -(segment.length * segmentProgress);
+                        offset = (segment.length * segmentProgress);
                     } else if (idx === 0) {
-                        offset = (segment.length * segmentProgress);
+                        offset = -(segment.length * segmentProgress);
                     } else {
-                        offset = (segment.length * segmentProgress);
+                        offset = -(segment.length * segmentProgress);
                     }
                 }
                 
