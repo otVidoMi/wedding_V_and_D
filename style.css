@@ -50,6 +50,7 @@ h1 {
   width: auto !important;
   min-width: 1200px;
   max-width: none;
+  top: 40px;
 }
 
 .bg-floral-ornament_2 {
