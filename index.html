@@ -268,9 +268,12 @@
 
     // Подключаем нужный скрипт
     if (isSafari()) {
+      const script2 = document.createElement('script');
+        script2.src = 'js/page-scroll-reveal-safari.js'; // для второго SVG
+        document.head.appendChild(script2);
         // Для Safari - исправленная версия
         const script = document.createElement('script');
-        script.src = '/js/page-scroll-reveal-safari.js';
+        script.src = '/js/page-scroll-reveal-safari2.js';
         document.head.appendChild(script);
     } else {
         // Для остальных браузеров - оригинальная версия
