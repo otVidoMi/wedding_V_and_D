@@ -1,4 +1,4 @@
-// glowing-line-safari.js - С ПРИНУДИТЕЛЬНОЙ ПЕРЕРИСОВКОЙ ДЛЯ SAFARI
+// glowing-line-safari.js - ИСПРАВЛЕННАЯ ЛОГИКА (линия ПОЯВЛЯЕТСЯ при скролле)
 (function() {
     function init() {
         const svg = document.querySelector('.bg-floral-ornament');
@@ -17,12 +17,12 @@
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
         console.log('🦊 Браузер Safari:', isSafari);
         
-        // Сохраняем оригинальные атрибуты
+        // Сохраняем атрибуты
         const d = originalPath.getAttribute('d');
         const stroke = originalPath.getAttribute('stroke');
         const strokeWidth = originalPath.getAttribute('stroke-width');
         
-        // Создаём НОВЫЙ path
+        // Создаём новый path
         const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         newPath.setAttribute('d', d);
         newPath.setAttribute('stroke', stroke);
@@ -31,57 +31,57 @@
         newPath.setAttribute('stroke-linecap', 'round');
         newPath.setAttribute('stroke-linejoin', 'round');
         
-        // Заменяем старый path новым
+        // Заменяем
         originalPath.remove();
         svg.appendChild(newPath);
         
-        // Получаем длину пути
+        // Получаем длину
         let length = 0;
         try {
             length = newPath.getTotalLength();
             console.log(`📏 Длина пути: ${length}px`);
         } catch(e) {
-            console.error('❌ Ошибка получения длины:', e);
+            console.error('❌ Ошибка:', e);
             return;
         }
         
         // Настраиваем dash-анимацию
         newPath.style.strokeDasharray = length;
+        
+        // *** ГЛАВНОЕ ИСПРАВЛЕНИЕ: правильная начальная точка ***
+        // Линия должна быть НЕВИДИМА в начале (offset = length)
         newPath.style.strokeDashoffset = length;
         
-        // *** ВАЖНО ДЛЯ SAFARI: принудительно применяем стили ***
-        // Без этого Safari может проигнорировать изменения
-        newPath.getBoundingClientRect();
-        
-        // Функция обновления с принудительной перерисовкой для Safari
         function updateLine() {
             const scrollTop = window.pageYOffset;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
             const maxScroll = documentHeight - windowHeight;
             
+            // Прогресс скролла от 0 до 1
             let progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
             progress = Math.min(1, Math.max(0, progress));
             
+            // *** КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ ***
+            // При progress = 0 → offset = length (линия не видна)
+            // При progress = 1 → offset = 0 (линия видна полностью)
             const offset = length * (1 - progress);
+            
             newPath.style.strokeDashoffset = offset;
             
-            // *** КЛЮЧЕВОЕ РЕШЕНИЕ ДЛЯ SAFARI ***
-            // Принудительно вызываем перерисовку, читая свойство
+            // Для Safari: принудительная перерисовка
             if (isSafari) {
-                // Этот трюк заставляет Safari перерисовать элемент
+                // Трюк для принудительной перерисовки
                 void newPath.offsetHeight;
-                // Или принудительно обновляем атрибут
-                newPath.setAttribute('stroke-dashoffset', offset);
             }
             
-            // Логируем для отладки (редко)
+            // Логируем для проверки
             if (Math.random() < 0.02) {
-                console.log(`📊 Прогресс: ${(progress*100).toFixed(1)}%, offset: ${offset.toFixed(0)}`);
+                console.log(`Прогресс: ${(progress*100).toFixed(1)}%, offset: ${offset.toFixed(0)}`);
             }
         }
         
-        // Запускаем при скролле с оптимизацией
+        // Оптимизация производительности
         let ticking = false;
         function onScroll() {
             if (!ticking) {
@@ -94,27 +94,15 @@
         }
         
         window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => setTimeout(updateLine, 100));
         
-        // Также обновляем при ресайзе
-        window.addEventListener('resize', () => {
-            setTimeout(updateLine, 100);
-        });
-        
-        // Запускаем один раз
+        // Запускаем
         updateLine();
         
-        console.log('✅ Скрипт для первого SVG запущен');
-        
-        // Дополнительная проверка для Safari: запускаем анимацию через 1 секунду
-        if (isSafari) {
-            setTimeout(() => {
-                updateLine();
-                console.log('🔄 Принудительное обновление для Safari');
-            }, 100);
-        }
+        console.log('✅ Скрипт запущен! Линия будет ПОЯВЛЯТЬСЯ при скролле вниз');
+        console.log(`Начальный offset: ${newPath.style.strokeDashoffset}`);
     }
     
-    // Запускаем после полной загрузки
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
