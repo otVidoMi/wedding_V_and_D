@@ -1,4 +1,4 @@
-// glowing-line-safari.js - ИСПРАВЛЕННАЯ ЛОГИКА (линия ПОЯВЛЯЕТСЯ при скролле)
+// glowing-line-safari.js - РАБОЧАЯ ВЕРСИЯ ДЛЯ SAFARI
 (function() {
     function init() {
         const svg = document.querySelector('.bg-floral-ornament');
@@ -13,9 +13,8 @@
             return;
         }
         
-        // Определяем Safari
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        console.log('🦊 Браузер Safari:', isSafari);
+        console.log('🦊 Safari режим:', isSafari);
         
         // Сохраняем атрибуты
         const d = originalPath.getAttribute('d');
@@ -36,21 +35,19 @@
         svg.appendChild(newPath);
         
         // Получаем длину
-        let length = 0;
+        let fullLength = 0;
         try {
-            length = newPath.getTotalLength();
-            console.log(`📏 Длина пути: ${length}px`);
+            fullLength = newPath.getTotalLength();
+            console.log(`📏 Полная длина пути: ${fullLength}px`);
         } catch(e) {
             console.error('❌ Ошибка:', e);
             return;
         }
         
-        // Настраиваем dash-анимацию
-        newPath.style.strokeDasharray = length;
-        
-        // *** ГЛАВНОЕ ИСПРАВЛЕНИЕ: правильная начальная точка ***
-        // Линия должна быть НЕВИДИМА в начале (offset = length)
-        newPath.style.strokeDashoffset = length;
+        // *** НОВЫЙ ПОДХОД ДЛЯ SAFARI ***
+        // Вместо stroke-dashoffset используем stroke-dasharray с прогрессивным увеличением
+        // Начальное состояние: [0, fullLength] - ничего не видно
+        // Конечное состояние: [fullLength, 0] - всё видно
         
         function updateLine() {
             const scrollTop = window.pageYOffset;
@@ -58,30 +55,27 @@
             const documentHeight = document.documentElement.scrollHeight;
             const maxScroll = documentHeight - windowHeight;
             
-            // Прогресс скролла от 0 до 1
+            // Прогресс от 0 до 1
             let progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
             progress = Math.min(1, Math.max(0, progress));
             
-            // *** КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ ***
-            // При progress = 0 → offset = length (линия не видна)
-            // При progress = 1 → offset = 0 (линия видна полностью)
-            const offset = length * (1 - progress);
+            // Вычисляем, сколько пикселей должно быть видно
+            const visibleLength = fullLength * progress;
             
-            newPath.style.strokeDashoffset = offset;
+            // Устанавливаем dasharray: [видимая_часть, невидимая_часть]
+            // Это работает во всех браузерах, включая Safari
+            newPath.style.strokeDasharray = `${visibleLength} ${fullLength}`;
             
-            // Для Safari: принудительная перерисовка
-            if (isSafari) {
-                // Трюк для принудительной перерисовки
-                void newPath.offsetHeight;
-            }
+            // Для Safari дополнительно сбрасываем offset в 0
+            newPath.style.strokeDashoffset = '0';
             
-            // Логируем для проверки
+            // Логируем для отладки
             if (Math.random() < 0.02) {
-                console.log(`Прогресс: ${(progress*100).toFixed(1)}%, offset: ${offset.toFixed(0)}`);
+                console.log(`Прогресс: ${(progress*100).toFixed(1)}%, видимо: ${visibleLength.toFixed(0)}px`);
             }
         }
         
-        // Оптимизация производительности
+        // Оптимизация
         let ticking = false;
         function onScroll() {
             if (!ticking) {
@@ -99,8 +93,7 @@
         // Запускаем
         updateLine();
         
-        console.log('✅ Скрипт запущен! Линия будет ПОЯВЛЯТЬСЯ при скролле вниз');
-        console.log(`Начальный offset: ${newPath.style.strokeDashoffset}`);
+        console.log('✅ Скрипт запущен! Используется метод stroke-dasharray');
     }
     
     if (document.readyState === 'loading') {
