@@ -82,7 +82,7 @@
                 // Начальное состояние
                 path.style.strokeDasharray = length;
                 // Для Safari 0, а для других браузеров начинаем со скрытого length
-                path.style.strokeDashoffset = 0;
+                path.style.strokeDashoffset = length;
                 
                 path.style.strokeOpacity = '1';
             } catch (e) {
@@ -165,7 +165,7 @@
                     
                     // Разная логика для разных сегментов
                     if (idx === 2) {
-                        offset = (segment.length * segmentProgress);
+                        offset = -(segment.length * segmentProgress);
                     } else if (idx === 0) {
                         offset = -(segment.length * segmentProgress);
                     } else {
