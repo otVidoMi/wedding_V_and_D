@@ -169,11 +169,11 @@
                     
                     // Разная логика для разных сегментов
                     if (idx === 2) {
-                        offset = (segment.length * segmentProgress);
+                        offset = -(segment.length * segmentProgress);
                     } else if (idx === 0) {
-                        offset = -(segment.length * segmentProgress);
+                        offset = (segment.length * segmentProgress);
                     } else {
-                        offset = -(segment.length * segmentProgress);
+                        offset = (segment.length * segmentProgress);
                     }
                 }
                 
