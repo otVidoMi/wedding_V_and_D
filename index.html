@@ -168,7 +168,7 @@
       <p class="contacts__description">По всем вопросам, связанным с мероприятием, вы можете обратиться к нашему организатору</p>
       <p class="contacts__name">Диляра</p>
       <p class="contacts__phone"><a href="tel:+79235083869">+7 (923) 508-38-69</a></p>
-      <a href="https://t.me/Rafaenkova_Dilara" class="contacts__button">Связаться</a>
+      <a href="javascript:void(0)" onclick="openTelegram('Rafaenkova_Dilara')" class="contacts__button">Связаться</a>
     </section>
 
     <!-- ФОРМА -->
@@ -265,13 +265,11 @@
         const isIOS = /iPad|iPhone|iPod/.test(ua);
         return isSafari || isIOS;
     }
-
     // Подключаем нужный скрипт
     if (isSafari()) {
       const script2 = document.createElement('script');
         script2.src = 'js/page-scroll-reveal-safari2.js'; // для второго SVG
         document.head.appendChild(script2);
-      
     } else {
         // Для остальных браузеров - оригинальная версия
         const desctopscript = document.createElement('script');
@@ -280,6 +278,16 @@
         const mobilescript = document.createElement('script');
         mobilescript.src = 'js/glowing-line2.js';
         document.head.appendChild(mobilescript);
+    }
+  </script>
+  <script>
+    function openTelegram(domain) {
+        // Пробуем открыть в приложении
+        window.location.href = `tg://resolve?domain=${domain}`;
+        // Через 1 секунду, если не открылось, переходим в web-версию
+        setTimeout(() => {
+            window.location.href = `https://t.me/${domain}`;
+        }, 1000);
     }
   </script>
 
