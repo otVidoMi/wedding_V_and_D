@@ -281,16 +281,6 @@
         document.head.appendChild(mobilescript);
     }
   </script>
-  <script>
-    function openTelegram(domain) {
-        // Пробуем открыть в приложении
-        window.location.href = `tg://resolve?domain=${domain}`;
-        // Через 1 секунду, если не открылось, переходим в web-версию
-        setTimeout(() => {
-            window.location.href = `https://t.me/${domain}`;
-        }, 1000);
-    }
-  </script>
 
   <script src="js/music-visualizer.js" defer></script>
   <script src="js/timer.js" defer></script>
